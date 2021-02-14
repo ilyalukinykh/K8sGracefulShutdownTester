@@ -31,11 +31,18 @@ namespace K8sGracefulShutdownTester
             } while (--seconds > 0);
         }
 
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<ConnectionCloseMiddleware>();
+        }
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
             Log($"Application starting. Process ID: {Process.GetCurrentProcess().Id}");
             appLifetime.ApplicationStopping.Register(ApplicationStopping);
             appLifetime.ApplicationStopped.Register(ApplicationStopped);
+
+            app.UseMiddleware<ConnectionCloseMiddleware>();
 
             app.Run(async (context) =>
             {

@@ -27,11 +27,11 @@ namespace K8sGracefulShutdownTester.Tester
 
                         if (resp.IsSuccessStatusCode)
                         {
-                            Console.WriteLine("{0}: Successful request, headers:{1}", DateTime.UtcNow, resp.Headers);
+                            Console.WriteLine("{0}: Successful request, headers:\n{1}", DateTime.UtcNow, resp.Headers);
                         }
                         else
                         {
-                            Console.WriteLine("{0}: Error! StatusCode: {1}, Response: {2}, headers:{3}", DateTime.UtcNow, resp.StatusCode, await resp.Content.ReadAsStringAsync(), resp.Headers);
+                            Console.WriteLine("{0}: Error! StatusCode: {1}, Response: {2}, headers:\n{3}", DateTime.UtcNow, resp.StatusCode, await resp.Content.ReadAsStringAsync(), resp.Headers);
                         }
                     }
                     catch (Exception ex)
