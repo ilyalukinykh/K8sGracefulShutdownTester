@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace K8sGracefulShutdownTester
 {
@@ -21,13 +20,9 @@ namespace K8sGracefulShutdownTester
     {
         private State state = State.Running;
 
-        private void Log(string msg) => Console.WriteLine($"{DateTime.UtcNow}: {msg}");
+        private static void Log(string msg) => Console.WriteLine($"{DateTime.UtcNow}: {msg}");
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-        }
-
-        private async Task SleepAndPrintForSeconds(int seconds)
+        private static async Task SleepAndPrintForSeconds(int seconds)
         {
             do
             {
@@ -36,7 +31,7 @@ namespace K8sGracefulShutdownTester
             } while (--seconds > 0);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
             Log($"Application starting. Process ID: {Process.GetCurrentProcess().Id}");
             appLifetime.ApplicationStopping.Register(ApplicationStopping);
@@ -65,9 +60,9 @@ namespace K8sGracefulShutdownTester
         {
             state = State.AfterSigterm;
             Log("ApplicationStopping called");
-            // Log("ApplicationStopping called, sleeping for 25s");
-            // Thread.Sleep(25000);
-            // Log("ApplicationStopping 10s sleep done");
+            Log("ApplicationStopping called, sleeping for 25s");
+            Thread.Sleep(25000);
+            Log("ApplicationStopping 10s sleep done");
         }
 
         private void ApplicationStopped()
